@@ -83,7 +83,7 @@ static void initialize(parking_lot_t *parking_lot, int size){
 	parking_lot->occupied = parking_lot->nextin = parking_lot->nextout = 0;
 	parking_lot->cars_in = parking_lot->cars_out = 0;
 
-	parking_lot->spaces = (int*)malloc(size * sizeof(*(parking_lot->spaces)));
+	parking_lot->spaces = (int*)calloc(size, sizeof(*(parking_lot->spaces)));
 
 	//initialize thread barrier so that it would wait for 
 	//NUM_THREADS threads to synchronize
@@ -121,7 +121,7 @@ static void* parking_handler(parking_lot_t* parking_lot){
 
 		//busy waiting for parking spaces
 		while(parking_lot->occupied == parking_lot->capacity){
-			//waiting on conditional variable space
+			//waiting on conditional variable num_space
 			//keep releasing locks
 			pthread_cond_wait(&(parking_lot->num_space), &(parking_lot->lock);
 		}
@@ -141,4 +141,65 @@ static void* parking_handler(parking_lot_t* parking_lot){
 
 	}
 	return ((void*) NULL);
+}
+
+static void * picking_handler(parking_lot_t* parking_lot){
+	
+
+	pthread_barrier_wait(&(parking_lot->barrier));
+
+	//simulate the random arrival of cars
+	while(1){
+	
+		//cause the current thread to sleep for a random amount of time
+		usleep(rand_r(&seed) & ONE_SECOND);
+		pthread_mutex_lock(&(parking_lot->lock));
+
+		//busy waiting for cars
+		while(parking_lot->occupied == 0){
+			//waiting on conditional variable num_car
+			//keep releasing locks
+			pthread_cond_wait(&(parking_lot->num_car), &(parking_lot->lock);
+		}
+
+		//pick the car
+		parking_lot->spaces[nextout] = 0;
+
+		parking_lot->occupied--;
+		parking_lot->nextout++;
+		parking_lot->nextout%= parking_lot->capacity;
+
+		parking_lot->cars_out++;
+		
+		//signal the conditional variable to wake up 
+		//waiting producer
+		pthread_cond_signal(&(parking_lot->num_space));
+
+	}
+	return ((void*) NULL);
+	
+}
+
+static void *monitor(parking_lot_t *parking_lot){
+	
+
+	while(true){
+
+		sleep(PERIOD);
+
+		pthread_mutex_lock(&(parking_lot->lock));
+
+		/*If the car_in = car_out + occupied,
+		 then the parking system is in consistent
+		state
+		*/
+
+		printf("car_in: %d\t", parking_lot->car_in);
+
+		printf("car_out+occupied: %d\n", parking_lot->car_out + parking_lot->occupied);
+
+		pthread_mutex_unlock((&parking_lot->lock));
+	}
+
+	return ((void*)NULL);
 }
