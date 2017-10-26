@@ -105,3 +105,40 @@ static void initialize(parking_lot_t *parking_lot, int size){
 
 }
 
+
+static void* parking_handler(parking_lot_t* parking_lot){
+	
+	unsigned int seed;
+
+	pthread_barrier_wait(&(parking_lot->barrier));
+
+	//simulate the random arrival of cars
+	while(1){
+	
+		//cause the current thread to sleep for a random amount of time
+		usleep(rand_r(&seed) & ONE_SECOND);
+		pthread_mutex_lock(&(parking_lot->lock));
+
+		//busy waiting for parking spaces
+		while(parking_lot->occupied == parking_lot->capacity){
+			//waiting on conditional variable space
+			//keep releasing locks
+			pthread_cond_wait(&(parking_lot->num_space), &(parking_lot->lock);
+		}
+
+		//park a  car(represented as a random number)
+		parking_lot->spaces[nextin] = rand_r(&seed) % RANGE;
+
+		parking_lot->occupied++;
+		parking_lot->nextin++;
+		parking_lot->nextin%= parking_lot->capacity;
+
+		parking_lot->cars_in++;
+		
+		//signal the conditional variable to wake up 
+		//waiting consumer
+		pthread_cond_signal(&(parking_lot->num_car));
+
+	}
+	return ((void*) NULL);
+}
