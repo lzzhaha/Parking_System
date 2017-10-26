@@ -12,7 +12,7 @@
 #define ONE_SECOND 1000000
 #define RANGE 10
 #define PERIOD 2
-#define NUM_THREADS 4 
+#define NUM_THREADS 6
 
 // structure of parking_lot
 typedef struct {
@@ -74,5 +74,34 @@ int main(int argc, char *argv[]) {
 	pthread_join(m, NULL);
 
 	exit(0);
+}
+
+
+static void initialize(parking_lot_t *parking_lot, int size){
+
+	parking_lot->capacity = size;
+	parking_lot->occupied = parking_lot->nextin = parking_lot->nextout = 0;
+	parking_lot->cars_in = parking_lot->cars_out = 0;
+
+	parking_lot->spaces = (int*)malloc(size * sizeof(*(parking_lot->spaces)));
+
+	//initialize thread barrier so that it would wait for 
+	//NUM_THREADS threads to synchronize
+	pthread_barrier_init(&&parking_lot->barrier, NULL, NUM_THREADS);
+
+	if(parking_lot->spaces == NULL){
+		printf("No enough memory\n");
+		exit(1);
+	}
+		
+	srand((unsigned int)(getpid());
+
+	pthread_mutex_init(&(parking_lot->lock, NULL);
+
+	pthread_cond_init(&(parking_lot->num_space, NULL);
+
+	pthread_cond_init(&(parking_lot->num_car, NULL);
+
+
 }
 
