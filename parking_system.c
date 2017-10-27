@@ -55,14 +55,14 @@ int main(int argc, char *argv[]) {
 
 
 
-	pthread_create(&car_parker1, NULL, parking_handler,&parking_lot);
-	pthread_create(&car_picker1, NULL, picking_handler, &parking_lot); 
-	pthread_create(&car_parker2, NULL, parking_handler, &parking_lot); 
-	pthread_create(&car_picker2, NULL, picking_handler, &parking_lot); 
-	pthread_create(&car_parker3, NULL, parking_handler, &parking_lot); 
-	pthread_create(&car_picker3, NULL, picking_handler, &parking_lot); 
+	pthread_create(&car_parker1, NULL, parking_handler,(void*)&parking_lot);
+	pthread_create(&car_picker1, NULL, picking_handler, (void*)&parking_lot); 
+	pthread_create(&car_parker2, NULL, parking_handler, (void*)&parking_lot); 
+	pthread_create(&car_picker2, NULL, picking_handler, (void*)&parking_lot); 
+	pthread_create(&car_parker3, NULL, parking_handler, (void*)&parking_lot); 
+	pthread_create(&car_picker3, NULL, picking_handler, (void*)&parking_lot); 
 
-	pthread_create(&parking_monitor, NULL, monitor,&parking_lot);  
+	pthread_create(&parking_monitor, NULL, monitor,(void*)&parking_lot);  
 
 	//terminate the threads sequentially
 	pthread_join(car_parker1, NULL);
