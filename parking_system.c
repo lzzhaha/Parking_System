@@ -131,6 +131,7 @@ static void* parking_handler(void* in_parking_lot){
 		//park a  car(represented as a random number)
 		parking_lot->spaces[parking_lot->nextin] = rand_r(&seed) % RANGE;
 
+		
 		parking_lot->occupied++;
 		parking_lot->nextin++;
 		parking_lot->nextin%= parking_lot->capacity;
